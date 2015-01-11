@@ -10,26 +10,26 @@ library(sp)
 library(rgdal)
 library(rgeos)
 
-sp_anls<- function(shpA, shpB, type, width) { 
-  shpA <- readOGR("data/url", shpA)
-  shpB <- readOGR("data/url", shpB)
+sp_anls<- function(places, railways, type, width) { 
+  places <- readOGR("data/url", places)
+  railways <- readOGR("data/url", railways)
   
   # transform to the selected projection system
-  shpA_proj<-spTransform(shpA, prj_string_RD)
-  shpB_proj<-spTransform(shpB, prj_string_RD)
+  places_proj<-spTransform(places, prj_string_RD)
+  railways_proj<-spTransform(railways, prj_string_RD)
   
   # make a subset according to the type that is specified by the user, input should be within "".
-  subset <- shpB_proj[shpB_proj$type == type, ]
+  subset <- railways_proj[railways_proj$type == type, ]
   
   # create a buffer zone accordinf to the width that is specified by the user
   buffer<- gBuffer(subset, width= width, byid= TRUE)
   
   # make intersect
-  a<- gIntersection(buffer,shpA_proj, byid=TRUE)
-  b<- gIntersects(buffer,shpA_proj, byid=TRUE)
+  a<- gIntersection(buffer,places_proj, byid=TRUE)
+  b<- gIntersects(buffer,places_proj, byid=TRUE)
  
   # select the city name
-  selected<-shpA_proj@data[b]
+  selected<-places_proj@data[b]
   
   #plot the final outputs
   plot(buffer,col='lightblue' )
